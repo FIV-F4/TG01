@@ -7,6 +7,7 @@ import random
 from gtts import gTTS
 import os
 from deep_translator import GoogleTranslator
+from meteo import get_weather
 
 
 
@@ -64,7 +65,10 @@ async def help(message: Message):
 
 @router.message(Command('Weather'))
 async def Weather(message: Message):
-    await message.answer(f"Тут будет помощь =)")
+    latitude = 59.57  # СПБ
+    longitude = 30.19  # СПБ
+    answer = get_weather(latitude, longitude)
+    await message.answer(answer)
 @router.message(CommandStart())
 async def start(message: Message):
     await message.answer(f"Привет, {message.from_user.full_name}! Я бот =)")
