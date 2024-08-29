@@ -15,10 +15,10 @@ def get_weather2(latitude, longitude):
     return data
 
 # Пример использования:
-latitude = 59.57  # СПБ
-longitude = 30.19  # СПБ
-print(get_weather(latitude, longitude))
-print(get_weather2(latitude, longitude))
+#latitude = 59.57  # СПБ
+#longitude = 30.19  # СПБ
+#print(get_weather(latitude, longitude))
+#print(get_weather2(latitude, longitude))
 
 
 

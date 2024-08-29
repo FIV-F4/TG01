@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Bot, Router, Dispatcher, F
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, FSInputFile, CallbackQuery
 from aiogram.filters import CommandStart, Command
 from config import TOKEN
 import random
@@ -8,6 +8,7 @@ from gtts import gTTS
 import os
 from deep_translator import GoogleTranslator
 from meteo import get_weather
+import keyboards as kb
 
 
 
@@ -15,6 +16,16 @@ from meteo import get_weather
 
 bot = Bot(token=TOKEN)
 router = Router()
+'''
+@router.callback_query(F.data == "news")
+async def news(callback: CallbackQuery):
+    await callback.answer("Новости подгружаются", show_alert=True)
+    await callback.message.answer("Вот свежие новости")
+'''
+@router.callback_query(F.data == "news")
+async def news(callback: CallbackQuery):
+    await callback.answer("Новости подгружаются", show_alert=True)
+    await callback.message.edit_text("Вот свежие новости", reply_markup=await kb.test_keyboard())
 
 @router.message(Command('video'))
 async def video(message: Message):
@@ -40,8 +51,8 @@ async def voice(message: Message):
 @router.message(Command('training'))
 async def training(message: Message):
     training_list = [
-    '1'
-    '2'
+    '1',
+    '2',
     '3'
     ]
     rand_training = random.choice(training_list)
@@ -63,6 +74,26 @@ async def photo(message: Message):
 async def help(message: Message):
     await message.answer(f"Тут будет помощь =)")
 
+@router.message(Command('dynamic'))
+async def dynamic(message: Message):
+    await message.answer("...", reply_markup=kb.inline_keyboard_test2)
+
+@router.callback_query(F.data == "dynamic1")
+async def news(callback: CallbackQuery):
+    await callback.answer("Обновление кнопок", show_alert=True)
+    await callback.message.edit_text("...", reply_markup=kb.inline_keyboard_test3)
+
+@router.callback_query(F.data == "dynamic1_1")
+async def news(callback: CallbackQuery):
+    await callback.message.answer("Опция 1")
+
+@router.callback_query(F.data == "dynamic1_2")
+async def news(callback: CallbackQuery):
+    await callback.message.answer("Опция 2")
+
+@router.message(Command('links'))
+async def links(message: Message):
+    await message.answer(f"Полезные ссылки:", reply_markup=kb.inline_keyboard_test)
 @router.message(Command('Weather'))
 async def Weather(message: Message):
     latitude = 59.57  # СПБ
@@ -71,12 +102,15 @@ async def Weather(message: Message):
     await message.answer(answer)
 @router.message(CommandStart())
 async def start(message: Message):
-    await message.answer(f"Привет, {message.from_user.full_name}! Я бот =)")
+    await message.answer(f"Привет, {message.from_user.full_name}! Я бот =)", reply_markup=kb.main) #reply_markup=await kb.test_keyboard())
 
-@router.message(F.text == "Что такое ИИ?")
-async def aitext(message: Message):
-    await message.answer(f"Терминатор бу-ха-ха")
-    
+@router.message(F.text == "Привет")
+async def hello(message: Message):
+    await message.answer(f"Приветик, {message.from_user.full_name}!")
+
+@router.message(F.text == "Пока")
+async def goodbye(message: Message):
+    await message.answer(f"Пока, {message.from_user.full_name}!")
 
 
 @router.message(F.photo)
